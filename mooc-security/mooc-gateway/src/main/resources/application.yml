@@ -1,0 +1,97 @@
+server:
+  port: 7001
+
+spring:
+  application:
+    name: gateway-service
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.183.132:8848
+        namespace: 57dbc1dd-80c3-448b-89d0-5b942d28d65c
+    sentinel:
+      eager: false
+      transport:
+        port: 8719
+        dashboard: 192.168.183.132:8858
+      datasource:
+        ds:
+          nacos:
+            server-addr: ${spring.cloud.nacos.discovery.server-addr}
+            data-id: ${spring.application.name}-sentinel
+            group-id: DEFAULT_GROUP
+            rule-type: gw-flow
+      scg:
+        fallback:
+          response-body: '{"code":403,"msg":"服务开启限流保护,请稍后再试!"}'
+          mode: response
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/user-service/**
+        - id: oauth2-service
+          uri: lb://oauth2-service
+          predicates:
+            - Path=/oauth2-service/**
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/order/**
+  datasource:
+    druid:
+      username: root
+      password: 123456
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://192.168.183.132:3306/mooc?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true
+      # 下面为连接池的补充设置，应用到上面所有数据源中
+      # 初始化大小，最小，最大
+      initialSize: 1
+      minIdle: 3
+      maxActive: 20
+      # 配置获取连接等待超时的时间
+      maxWait: 3000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 30000
+      validationQuery: select 'x'
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      # 打开 PSCache，并且指定每个连接上 PSCache 的大小
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      # 配置监控统计拦截的 filters，去掉后监控界面 sql 无法统计，'wall'用于防火墙
+      filters: stat,wall,slf4j
+      # 通过 connectProperties 属性来打开 mergeSql 功能；慢 SQL 记录
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      # 合并多个 DruidDataSource 的监控数据
+      useGlobalDataSourceStat: true
+      # Druid Pool 运行环境
+      #通过connectProperties属性来打开mergeSql功能；慢SQL记录
+      filter:
+        stat:
+          merge-sql: true
+          slow-sql-millis: 500
+      web-stat-filter:
+        enabled: false
+      stat-view-servlet:
+        enabled: false
+
+
+ribbon:
+  eager-load:
+    enabled: true
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+
+logging:
+  level:
+    root: info
+    com: info

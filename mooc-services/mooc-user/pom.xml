@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>mooc-services</artifactId>
+    <groupId>com.xagu</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>mooc-user</artifactId>
+  <packaging>pom</packaging>
+  <modules>
+    <module>mooc-user-client</module>
+    <module>mooc-user-model</module>
+    <module>mooc-user-service</module>
+  </modules>
+
+
+</project>
