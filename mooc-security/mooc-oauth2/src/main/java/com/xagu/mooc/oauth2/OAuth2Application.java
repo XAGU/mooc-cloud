@@ -2,8 +2,11 @@ package com.xagu.mooc.oauth2;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 /**
  * @author xagu
@@ -13,7 +16,6 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableResourceServer
 public class OAuth2Application {
 
     public static void main(String[] args) {

@@ -1,7 +1,6 @@
 package com.xagu.mooc.oauth2.service;
 
 import com.alibaba.nacos.client.naming.utils.CollectionUtils;
-import com.xagu.mooc.oauth2.domain.SecurityUserDetails;
 import com.xagu.mooc.user.pojo.Power;
 import com.xagu.mooc.user.pojo.Role;
 import com.xagu.mooc.user.pojo.User;
@@ -17,7 +16,6 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 /**
@@ -44,11 +42,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             .query(
                 "select * from role left join user_role ur on role.role_id = ur.role_id where ur.user_id = ?",
                 new Integer[]{user.getUserId()}, new BeanPropertyRowMapper<>(Role.class));
-        List<Integer> roleIds = roles.stream().map(Role::getRoleId).collect(Collectors.toList());
         //获取所有角色的权限
         List<Power> powers = jdbcTemplate
             .query("select power.* from power left join role_power rp on power.power_id = rp.power_id where rp.role_id in (?)",
-                roleIds.toArray(), new BeanPropertyRowMapper<>(Power.class));
+                roles.stream().map(Role::getRoleId).toArray(), new BeanPropertyRowMapper<>(Power.class));
         List<String> powerCode = powers.stream().filter(power -> !StringUtils.isEmpty(power.getPowerUrl())).map(Power::getPowerUrl)
             .collect(Collectors.toList());
         //构建oauth2的用户
@@ -62,6 +59,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
             user.getUsername(),
             user.getPassword(),
+            user.getEnable() == 1,
+            true,
+            true,
+            user.getEnable() == 1,
             authorityList
         );
     }

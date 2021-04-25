@@ -50,4 +50,6 @@ public interface UserMapper {
      */
     User loadUserByUsername(@Param("username")String username);
 
+    User selectOneByUserId(@Param("userId")Integer userId);
+
 }

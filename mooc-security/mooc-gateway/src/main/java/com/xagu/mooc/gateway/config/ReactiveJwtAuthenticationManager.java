@@ -35,17 +35,22 @@ public class ReactiveJwtAuthenticationManager implements ReactiveAuthenticationM
             .map(BearerTokenAuthenticationToken::getToken)
             .flatMap((accessToken ->{
                 log.info("accessToken is :{}",accessToken);
-                OAuth2AccessToken oAuth2AccessToken = this.tokenStore.readAccessToken(accessToken);
+                OAuth2AccessToken oAuth2AccessToken;
+                try {
+                    oAuth2AccessToken = this.tokenStore.readAccessToken(accessToken);
+                }catch (InvalidTokenException e){
+                    return Mono.error(new InvalidTokenException("Access Token无效!"));
+                }
                 //根据access_token从数据库获取不到OAuth2AccessToken
                 if(oAuth2AccessToken == null){
-                    return Mono.error(new InvalidTokenException("invalid access token,please check"));
+                    return Mono.error(new InvalidTokenException("Access Token无效!"));
                 }else if(oAuth2AccessToken.isExpired()){
-                    return Mono.error(new InvalidTokenException("access token has expired,please reacquire token"));
+                    return Mono.error(new InvalidTokenException("Access Token已过期,请重新获取!"));
                 }
 
                 OAuth2Authentication oAuth2Authentication =this.tokenStore.readAuthentication(accessToken);
                 if(oAuth2Authentication == null){
-                    return Mono.error(new InvalidTokenException("Access Token 无效!"));
+                    return Mono.error(new InvalidTokenException("Access Token无效!"));
                 }else {
                     return Mono.just(oAuth2Authentication);
                 }

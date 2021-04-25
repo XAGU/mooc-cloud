@@ -7,8 +7,8 @@ package com.xagu.mooc.user.config;
 import cn.hutool.core.collection.CollectionUtil;
 import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -34,6 +34,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 @EnableSwagger2WebMvc
 @EnableKnife4j
 public class Swagger2Config {
+
+    @Value("${spring.application.name}")
+    private String applicationName;
+
     @Bean
     public Docket createRestApi(){
         //schema
@@ -67,8 +71,8 @@ public class Swagger2Config {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-            .title("micro-mooc-user")
-            .description("用户服务API文档")
+            .title("micro-mooc-" + applicationName)
+            .description(applicationName + "服务API文档")
             .contact("macro")
             .version("1.0")
             .build();

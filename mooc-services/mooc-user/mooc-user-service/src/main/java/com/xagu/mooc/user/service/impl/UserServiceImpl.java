@@ -6,13 +6,13 @@ import com.xagu.mooc.base.domain.ResuMenu;
 import com.xagu.mooc.base.domain.request.PageDomain;
 import com.xagu.mooc.base.tools.DateUtils;
 import com.xagu.mooc.base.tools.security.SecurityUtil;
+import com.xagu.mooc.user.mapper.PowerMapper;
 import com.xagu.mooc.user.mapper.UserMapper;
 import com.xagu.mooc.user.mapper.UserRoleMapper;
 import com.xagu.mooc.user.pojo.Power;
 import com.xagu.mooc.user.pojo.User;
 import com.xagu.mooc.user.pojo.UserRole;
 import com.xagu.mooc.user.service.UserService;
-import com.xagu.mooc.user.vo.UserWithPower;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +34,9 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private UserRoleMapper userRoleMapper;
+
+    @Resource
+    private PowerMapper powerMapper;
 
 
     @Override
@@ -83,11 +86,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<ResuMenu> getLoginUserPowers() {
-        UserWithPower loginUser = (UserWithPower) SecurityUtil.getLoginUser();
-        if (loginUser == null || loginUser.getPowers() == null) {
+        String username = SecurityUtil.getLoginUser();
+        if (StringUtils.isEmpty(username)) {
             return null;
         }
-        List<Power> powers = loginUser.getPowers();
+        List<Power> powers =  powerMapper.selectPowerByUserId(userMapper.loadUserByUsername(username).getUserId());
         List<ResuMenu> resuMenus = new ArrayList<>();
         for (Power power : powers) {
             ResuMenu resuMenu = new ResuMenu();
@@ -104,15 +107,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getLoginUser() {
-        return (User) SecurityUtil.getLoginUser();
+        String username = SecurityUtil.getLoginUser();
+        if (StringUtils.isEmpty(username)) {
+            return null;
+        }
+        return userMapper.loadUserByUsername(username);
     }
 
     @Override
-    public Boolean updateMyself(String username, String realName, String phoneNum, String email, String desc) {
-        UserWithPower loginUser = (UserWithPower) SecurityUtil.getLoginUser();
-        if (loginUser == null || loginUser.getPowers() == null) {
-            return false;
+    public Boolean updateMyself(String username, String realName, String phoneNum, String email,
+        String desc) {
+        String currentUsername = SecurityUtil.getLoginUser();
+        if (StringUtils.isEmpty(currentUsername)) {
+            return null;
         }
+        User loginUser = userMapper.loadUserByUsername(currentUsername);
         User user = new User();
         user.setUsername(username);
         user.setRealName(realName);

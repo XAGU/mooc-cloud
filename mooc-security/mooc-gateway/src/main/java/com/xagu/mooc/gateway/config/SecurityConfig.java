@@ -1,10 +1,13 @@
 package com.xagu.mooc.gateway.config;
 
 import javax.annotation.Resource;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -17,7 +20,9 @@ import org.springframework.security.web.server.authentication.AuthenticationWebF
 /**
  * @author xagu Created on 2020/9/13 Email:xagu_qc@foxmail.com Describe: TODO
  */
+@AllArgsConstructor
 @Configuration
+@EnableWebFluxSecurity
 public class SecurityConfig {
 
     @Resource
