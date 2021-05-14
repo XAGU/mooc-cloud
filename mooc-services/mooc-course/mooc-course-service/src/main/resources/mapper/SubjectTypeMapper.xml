@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xagu.mooc.course.mapper.SubjectTypeMapper">
+  <resultMap id="BaseResultMap" type="com.xagu.mooc.course.pojo.SubjectType">
+    <!--@mbg.generated-->
+    <!--@Table subject_type-->
+    <id column="subject_id" jdbcType="INTEGER" property="subjectId" />
+    <result column="subject_name" jdbcType="VARCHAR" property="subjectName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    subject_id, subject_name
+  </sql>
+
+  <select id="selectByAll" resultMap="BaseResultMap">
+    select subject_id,
+           subject_name
+    from subject_type
+    <where>
+      <if test="subjectId != null">
+        and subject_id = #{subjectId,jdbcType=INTEGER}
+      </if>
+      <if test="subjectName != null and subjectName != ''">
+        and subject_name like concat('%',#{subjectName,jdbcType=VARCHAR},'%')
+      </if>
+    </where>
+  </select>
+
+  <insert id="insertSubject" useGeneratedKeys="true" keyProperty="subjectId">
+    insert into subject_type
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      subject_name
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      #{subjectName,jdbcType=VARCHAR}
+    </trim>
+  </insert>
+
+  <update id="updateSubject">
+    update subject_type
+    <set>
+      <if test="subjectName != null and subjectName != ''">
+        subject_name = #{subjectName,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where subject_id = #{subjectId,jdbcType=INTEGER}
+  </update>
+
+  <delete id="deleteSubjects">
+    delete from subject_type where subject_id in
+    <foreach collection="array" item="id" open="(" separator="," close=")">
+      #{id,jdbcType=VARCHAR}
+    </foreach>
+  </delete>
+
+</mapper>

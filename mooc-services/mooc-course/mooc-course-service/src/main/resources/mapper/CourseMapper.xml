@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xagu.mooc.course.mapper.CourseMapper">
+    <resultMap id="BaseResultMap" type="com.xagu.mooc.course.pojo.Course">
+        <!--@mbg.generated-->
+        <!--@Table course-->
+        <id column="course_id" jdbcType="INTEGER" property="courseId"/>
+        <result column="course_name" jdbcType="VARCHAR" property="courseName"/>
+        <result column="course_info" jdbcType="VARCHAR" property="courseInfo"/>
+        <result column="course_cover" jdbcType="VARCHAR" property="courseCover"/>
+        <result column="course_click" jdbcType="INTEGER" property="courseClick"/>
+        <result column="course_style" jdbcType="TINYINT" property="courseStyle"/>
+        <result column="creater_id" jdbcType="INTEGER" property="createrId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <association property="subjectType" resultMap="com.xagu.mooc.course.mapper.SubjectTypeMapper.BaseResultMap"/>
+        <association property="teacher" resultMap="UserResultMap"/>
+    </resultMap>
+
+    <resultMap id="UserResultMap" type="com.xagu.mooc.user.pojo.User">
+        <!--@mbg.generated-->
+        <!--@Table user-->
+        <id column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="real_name" jdbcType="VARCHAR" property="realName"/>
+        <result column="phone_num" jdbcType="VARCHAR" property="phoneNum"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="head_img" jdbcType="VARCHAR" property="headImg"/>
+        <result column="school_name" jdbcType="VARCHAR" property="schoolName"/>
+        <result column="desc" jdbcType="LONGVARCHAR" property="desc"/>
+        <result column="reg_time" jdbcType="TIMESTAMP" property="regTime"/>
+        <result column="enable" jdbcType="TINYINT" property="enable"/>
+        <result column="role_id" javaType="integer" property="roleId"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        course_id, course_name, course_info, course_cover, course_click, course_style, subject_id,
+        creater_id,create_time
+    </sql>
+
+    <select id="selectByAll" resultMap="BaseResultMap">
+        select course_id,
+        course_name,
+        course_info,
+        course_cover,
+        course_click,
+        course_style,
+        creater_id,
+        create_time
+        from course
+        <where>
+            <if test="courseId != null">
+                and course_id = #{courseId,jdbcType=INTEGER}
+            </if>
+            <if test="courseName != null and courseName != ''">
+                  and course_name like concat('%', #{courseName,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="courseStyle != null and courseStyle != -1">
+                  and course_style = #{courseStyle,jdbcType=TINYINT}
+            </if>
+            <if test="subjectType != null and subjectType.subjectId != null">
+                  and subject_id = #{subjectType.subjectId,jdbcType=INTEGER}
+            </if>
+            <if test="createrId != null">
+                  and creater_id = #{createrId,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="selectAllContainSubject" resultMap="BaseResultMap">
+        select course_id,
+        course_name,
+        course_info,
+        course_cover,
+        course_click,
+        course_style,
+        creater_id,
+        create_time,
+        st.subject_id,
+        st.subject_name,
+        u.user_id,
+        u.real_name,
+        u.head_img,
+        u.email,
+        u.`desc`,
+        u.phone_num
+        from course
+        inner join subject_type st on course.subject_id = st.subject_id
+        inner join user u on course.creater_id=u.user_id
+        <where>
+        <if test="courseId != null">
+            and course_id = #{courseId,jdbcType=INTEGER}
+        </if>
+        <if test="courseName != null and courseName != ''">
+            and course_name like concat('%', #{courseName,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="courseStyle != null and courseStyle != -1">
+            and course_style = #{courseStyle,jdbcType=TINYINT}
+        </if>
+        <if test="subjectType != null and subjectType.subjectId != null">
+            and course.subject_id = #{subjectType.subjectId,jdbcType=INTEGER}
+        </if>
+    </where>
+    </select>
+
+    <insert id="insertCourse" useGeneratedKeys="true" keyProperty="courseId">
+        insert into course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            course_name,
+            <if test="courseInfo != null and courseInfo != ''">course_info,</if>
+            course_cover,
+            course_click,
+            course_style,
+            subject_id,
+            creater_id,
+            create_time
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            #{courseName,jdbcType=VARCHAR},
+            <if test="courseInfo != null and courseInfo != ''">#{courseInfo,jdbcType=VARCHAR},</if>
+            #{courseCover,jdbcType=VARCHAR},
+            #{courseClick,jdbcType=INTEGER},
+            #{courseStyle,jdbcType=TINYINT},
+            #{subjectType.subjectId,jdbcType=INTEGER},
+            #{createrId,jdbcType=INTEGER},
+            #{createTime,jdbcType=TIMESTAMP}
+        </trim>
+    </insert>
+
+    <update id="updateCourse">
+        update course
+        <set>
+            <if test="courseName != null and courseName != ''">
+                course_name = #{courseName,jdbcType=VARCHAR},
+            </if>
+            <if test="courseInfo != null and courseInfo != ''">
+                    course_info = #{courseInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="courseCover != null and courseCover != ''">
+                    course_cover = #{courseCover,jdbcType=VARCHAR},
+            </if>
+            <if test="courseStyle != null">
+                    course_style = #{courseStyle,jdbcType=TINYINT},
+            </if>
+            <if test="subjectType != null and subjectType.subjectId != null">
+                subject_id = #{subjectType.subjectId,jdbcType=INTEGER},
+            </if>
+        </set>
+        where course_id=#{courseId,jdbcType=INTEGER}
+    </update>
+
+    <delete id="batchDelete">
+        delete from course where course_id in
+        <foreach collection="array" item="id" open="(" close=")" separator=",">
+            #{id,jdbcType=VARCHAR}
+        </foreach>
+    </delete>
+
+    <update id="updateCourseClick">
+        update course
+        <set>
+            course_click = course.course_click + 1
+        </set>
+        where course_id=#{courseId,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectBySubjectId" resultMap="BaseResultMap">
+        select course_id,
+               course_name,
+               course_info,
+               course_cover,
+               course_click,
+               course_style,
+               creater_id,
+               create_time
+        from course
+        where subject_id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectOrderByClick" resultMap="BaseResultMap">
+        select course_id,
+               course_name,
+               course_info,
+               course_cover,
+               course_click,
+               course_style,
+               creater_id,
+               create_time
+        from course
+        order by course_click desc
+    </select>
+
+    <select id="selectByCreaterId" resultMap="BaseResultMap">
+        select course_id,
+        course_name,
+        course_info,
+        course_cover,
+        course_click,
+        course_style,
+        creater_id,
+        create_time,
+        st.subject_id,
+        st.subject_name
+        from course
+        inner join subject_type st on course.subject_id = st.subject_id
+        <where>
+            <if test="courseId != null">
+                and course_id = #{courseId,jdbcType=INTEGER}
+            </if>
+            <if test="courseName != null and courseName != ''">
+                and course_name like concat('%', #{courseName,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="courseStyle != null and courseStyle != -1">
+                and course_style = #{courseStyle,jdbcType=TINYINT}
+            </if>
+            <if test="subjectType != null and subjectType.subjectId != null">
+                and course.subject_id = #{subjectType.subjectId,jdbcType=INTEGER}
+            </if>
+            <if test="createrId != null">
+                and creater_id = #{createrId,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+</mapper>

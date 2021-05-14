@@ -14,6 +14,11 @@
   <modules>
     <module>mooc-base</module>
     <module>mooc-user</module>
+    <module>mooc-course</module>
+    <module>mooc-fileupload</module>
+    <module>mooc-message</module>
+    <module>mooc-practical</module>
+    <module>mooc-sign</module>
   </modules>
 
   <dependencies>

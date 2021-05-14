@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xagu.mooc.sign.mapper.SignMapper">
+  <resultMap id="BaseResultMap" type="com.xagu.mooc.sign.pojo.Sign">
+    <!--@mbg.generated-->
+    <!--@Table sign-->
+    <id column="sign_id" jdbcType="INTEGER" property="signId" />
+    <result column="course_id" jdbcType="INTEGER" property="courseId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="over_time" jdbcType="TIMESTAMP" property="overTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    sign_id, course_id, create_time, over_time
+  </sql>
+    <select id="selectByAll" resultMap="BaseResultMap" parameterType="com.xagu.mooc.sign.pojo.Sign">
+        select
+        <include refid="Base_Column_List"/>
+        from sign
+        <where>
+            <if test="courseId != null">
+                and course_id = #{courseId,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+    <insert id="insertSign" parameterType="com.xagu.mooc.sign.pojo.Sign">
+        insert into sign(course_id,create_time,over_time) values
+        (#{courseId,jdbcType=INTEGER},#{createTime,jdbcType=TIMESTAMP},#{overTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <delete id="deleteById">
+        delete from sign where sign_id in
+        <foreach collection="array" open="(" separator="," close=")" item="id">
+            #{id,jdbcType=VARCHAR}
+        </foreach>
+    </delete>
+</mapper>

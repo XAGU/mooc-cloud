@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xagu.mooc.sign.mapper.UserSignMapper">
+  <resultMap id="BaseResultMap" type="com.xagu.mooc.sign.pojo.UserSign">
+    <!--@mbg.generated-->
+    <!--@Table user_sign-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="sign_id" jdbcType="INTEGER" property="signId" />
+    <result column="sign_time" jdbcType="TIMESTAMP" property="signTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, user_id, sign_id, sign_time
+  </sql>
+
+  <resultMap id="userCourseSign" type="com.xagu.mooc.sign.pojo.UserCourseSign">
+    <id property="courseId" column="course_id"/>
+    <result property="userId" column="user_id"/>
+    <result property="courseName" column="course_name"/>
+    <result property="signTime" column="sign_time"/>
+  </resultMap>
+  
+  <select id="selectByUser" resultMap="userCourseSign">
+    select c.course_name,us.sign_time
+    from sign as s,course as c,user_sign as us
+    where c.course_id=s.course_id and s.sign_id=us.sign_id
+    and c.course_id=#{param1,jdbcType=VARCHAR}
+    and us.user_id=#{param2,jdbcType=INTEGER}
+  </select>
+  <insert id="insertUserSign" parameterType="com.xagu.mooc.sign.pojo.UserSign">
+    insert into user_sign(user_id, sign_id, sign_time) values
+    (#{userId,jdbcType=VARCHAR},#{signId,jdbcType=INTEGER},#{signTime,jdbcType=TIMESTAMP})
+  </insert>
+    <delete id="batchDelete">
+      delete from user_sign where id in
+      <foreach collection="array" item="id" open="(" close=")" separator=",">
+        #{id,jdbcType=VARCHAR}
+      </foreach>
+    </delete>
+</mapper>

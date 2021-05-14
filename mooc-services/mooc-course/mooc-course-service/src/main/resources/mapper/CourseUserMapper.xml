@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xagu.mooc.course.mapper.CourseUserMapper">
+    <resultMap id="BaseResultMap" type="com.xagu.mooc.course.pojo.CourseUser">
+        <result column="course_id" jdbcType="INTEGER" property="courseId"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <association property="course" resultMap="com.xagu.mooc.course.mapper.CourseMapper.BaseResultMap"/>
+        <association property="user" resultMap="UserResultMap"/>
+    </resultMap>
+
+  <resultMap id="UserResultMap" type="com.xagu.mooc.user.pojo.User">
+    <!--@mbg.generated-->
+    <!--@Table user-->
+    <id column="user_id" jdbcType="INTEGER" property="userId"/>
+    <result column="username" jdbcType="VARCHAR" property="username"/>
+    <result column="password" jdbcType="VARCHAR" property="password"/>
+    <result column="real_name" jdbcType="VARCHAR" property="realName"/>
+    <result column="phone_num" jdbcType="VARCHAR" property="phoneNum"/>
+    <result column="email" jdbcType="VARCHAR" property="email"/>
+    <result column="head_img" jdbcType="VARCHAR" property="headImg"/>
+    <result column="school_name" jdbcType="VARCHAR" property="schoolName"/>
+    <result column="desc" jdbcType="LONGVARCHAR" property="desc"/>
+    <result column="reg_time" jdbcType="TIMESTAMP" property="regTime"/>
+    <result column="enable" jdbcType="TINYINT" property="enable"/>
+    <result column="role_id" javaType="integer" property="roleId"/>
+  </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        course_id, user_id
+    </sql>
+
+    <!--查用户拥有的课程-->
+    <select id="selectCoursesByUser" resultMap="com.xagu.mooc.course.mapper.CourseMapper.BaseResultMap">
+        select c.*,
+               u.user_id,
+               u.username,
+               u.real_name,
+               u.head_img,
+               u.email,
+               u.`desc`,
+               st.subject_name
+        from course c
+                 inner join course_user cu on cu.course_id = c.course_id
+                 inner join user u on u.user_id = c.creater_id
+                 inner join subject_type st on c.subject_id = st.subject_id
+        where cu.user_id = #{id}
+    </select>
+
+    <!--查课程拥有的用户-->
+    <select id="selectUsersByCourse" resultMap="UserResultMap">
+        select u.user_id,
+        u.username,
+        u.real_name,
+        u.phone_num,
+        u.email,
+        u.school_name,
+        u.`desc`,
+        u.reg_time
+        from user u
+        inner join course_user cu on u.user_id = cu.user_id
+        inner join course c on cu.course_id = c.course_id
+        <where>
+            cu.course_id = #{id,jdbcType=INTEGER}
+            <if test="user.userId != null">
+                  and u.user_id = #{user.userId,jdbcType=INTEGER}
+            </if>
+            <if test="user.username != null and user.username != ''">
+                  and u.username like concat('%', #{ user.username,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="user.realName != null and user.realName != ''">
+                  and u.real_name like concat('%', #{user.realName,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="user.phoneNum != null and user.phoneNum != ''">
+                  and u.phone_num like concat('%', #{user.phoneNum,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="user.email != null and user.email != ''">
+                  and u.email like concat('%', #{user.email,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="user.schoolName != null and user.schoolName != ''">
+                  and u.school_name like concat('%', #{user.schoolName,jdbcType=VARCHAR}, '%')
+      </if>
+        </where>
+    </select>
+
+    <!--为用户添加课程-->
+    <insert id="insertUserCourse">
+        insert into course_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+      course_id,
+      user_id
+    </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+      #{courseId,jdbcType=INTEGER},
+      #{userId,jdbcType=INTEGER}
+    </trim>
+    </insert>
+
+    <delete id="deleteUserCourse">
+        delete
+        from course_user
+        where course_id = #{cId,jdbcType=INTEGER}
+          and user_id = #{sId,jdbcType=INTEGER}
+    </delete>
+</mapper>

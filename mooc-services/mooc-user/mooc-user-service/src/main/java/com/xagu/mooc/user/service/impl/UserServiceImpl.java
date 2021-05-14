@@ -115,8 +115,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean updateMyself(String username, String realName, String phoneNum, String email,
-        String desc) {
+    public Boolean updateMyself(String username, String realName, String phoneNum, 
+        String email,String desc) {
         String currentUsername = SecurityUtil.getLoginUser();
         if (StringUtils.isEmpty(currentUsername)) {
             return null;

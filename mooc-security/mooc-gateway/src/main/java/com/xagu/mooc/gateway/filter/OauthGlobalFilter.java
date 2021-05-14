@@ -1,7 +1,7 @@
 package com.xagu.mooc.gateway.filter;
 
 /**
- * @author xagu Created on 2020/9/13 Email:xagu_qc@foxmail.com Describe: TODO
+ * @author xagu Created on 2021/2/13 Email:xagu_qc@foxmail.com Describe: TODO
  */
 
 import cn.hutool.core.util.StrUtil;

@@ -1,7 +1,7 @@
 package com.xagu.mooc.user.config;
 
 /**
- * @author xagu Created on 2020/9/13 Email:xagu_qc@foxmail.com Describe: TODO
+ * @author xagu Created on 2021/2/13 Email:xagu_qc@foxmail.com Describe: TODO
  */
 
 import cn.hutool.core.collection.CollectionUtil;
@@ -73,7 +73,7 @@ public class Swagger2Config {
         return new ApiInfoBuilder()
             .title("micro-mooc-" + applicationName)
             .description(applicationName + "服务API文档")
-            .contact("macro")
+            .contact("XAGU")
             .version("1.0")
             .build();
     }

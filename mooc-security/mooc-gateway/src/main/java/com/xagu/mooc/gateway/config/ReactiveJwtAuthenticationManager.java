@@ -14,7 +14,7 @@ import org.springframework.security.oauth2.server.resource.BearerTokenAuthentica
 import reactor.core.publisher.Mono;
 
 /**
- * @author xagu Created on 2020/9/13 Email:xagu_qc@foxmail.com Describe: TODO
+ * @author xagu Created on 2021/2/13 Email:xagu_qc@foxmail.com Describe: TODO
  */
 @Slf4j
 public class ReactiveJwtAuthenticationManager implements ReactiveAuthenticationManager {

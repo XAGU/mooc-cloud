@@ -11,5 +11,13 @@
 
   <artifactId>mooc-user-model</artifactId>
 
+  <dependencies>
+    <dependency>
+      <groupId>com.xagu</groupId>
+      <artifactId>mooc-base-model</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+
 
 </project>

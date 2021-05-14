@@ -52,6 +52,7 @@ spring:
         url-pattern: /druid/*
         enabled: true
         reset-enable: false
+        allow:
       web-stat-filter:
         enabled: true
         url-pattern: /*
@@ -77,6 +78,8 @@ feign:
           - com.xagu.mooc.feign.interceptor.FeignRequestInterceptor
         readTimeout: 60000
         connectTimeout: 60000
+  okhttp:
+    enabled: true
 
 # pageHelper 配置
 pagehelper:
@@ -88,4 +91,4 @@ pagehelper:
 logging:
   level:
     root: info
-    com: info
+    com.xagu: debug

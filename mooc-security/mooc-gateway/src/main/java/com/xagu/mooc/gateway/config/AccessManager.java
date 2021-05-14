@@ -4,6 +4,7 @@ import com.alibaba.nacos.common.utils.ConcurrentHashSet;
 import java.util.Collection;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.authorization.AuthorizationDecision;
@@ -22,7 +23,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * @author xagu Created on 2020/9/13 Email:xagu_qc@foxmail.com Describe: TODO
+ * @author xagu Created on 2021/2/13 Email:xagu_qc@foxmail.com Describe: TODO
  */
 @Slf4j
 @Component
@@ -40,6 +41,7 @@ public class AccessManager implements ReactiveAuthorizationManager<Authorization
         permitAll.add("/**/swagger-resources/**");
         permitAll.add("/webjars/**");
         permitAll.add("/doc.html");
+        permitAll.add("/**/druid");
         permitAll.add("/swagger-ui.html");
         permitAll.add("/**/oauth/**");
     }
@@ -53,6 +55,11 @@ public class AccessManager implements ReactiveAuthorizationManager<Authorization
         //请求资源
         ServerHttpRequest request = exchange.getRequest();
         String requestPath = request.getURI().getPath();
+
+        // 1. 对应跨域的预检请求直接放行
+        if (request.getMethod() == HttpMethod.OPTIONS) {
+            return Mono.just(new AuthorizationDecision(true));
+        }
 
         // 是否直接放行
         if (permitAll(requestPath)) {

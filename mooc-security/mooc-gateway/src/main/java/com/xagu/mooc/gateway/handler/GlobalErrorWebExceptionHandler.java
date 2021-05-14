@@ -19,7 +19,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * @author xagu Created on 2020/9/13 Email:xagu_qc@foxmail.com Describe: 网关全局异常处理
+ * @author xagu Created on 2021/2/13 Email:xagu_qc@foxmail.com Describe: 网关全局异常处理
  */
 @Slf4j
 @Order(-1)

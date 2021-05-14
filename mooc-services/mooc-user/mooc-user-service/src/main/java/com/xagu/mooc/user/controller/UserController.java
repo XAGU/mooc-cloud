@@ -117,8 +117,10 @@ public class UserController extends BaseController {
      * @return
      */
     @PutMapping("myself")
-    public ResuBean updateMyself(String username, String realName, String phoneNum, String email, String desc) {
-        return decide(userService.updateMyself(username, realName, phoneNum, email, desc),
+    public ResuBean updateMyself(String username, String realName, String phoneNum, 
+        String email, String desc) {
+        return decide(userService.updateMyself(username, realName, phoneNum,
+        email, desc),
                 MessageConstants.UPDATE_SUCCESS,
                 MessageConstants.UPDATE_FAILURE);
     }

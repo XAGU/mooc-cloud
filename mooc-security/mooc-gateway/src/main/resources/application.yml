@@ -27,6 +27,19 @@ spring:
           response-body: '{"code":403,"msg":"服务开启限流保护,请稍后再试!"}'
           mode: response
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            # 允许携带认证信息
+            # 允许跨域的源(网站域名/ip)，设置*为全部
+            # 允许跨域请求里的head字段，设置*为全部
+            # 允许跨域的method， 默认为GET和OPTIONS，设置*为全部
+            # 跨域允许的有效期
+            allow-credentials: true
+            allowed-origins: "*"
+            allowed-headers: "*"
+            allowed-methods: "*"
+            max-age: 3600
       discovery:
         locator:
           enabled: true
@@ -39,10 +52,26 @@ spring:
           uri: lb://oauth2-service
           predicates:
             - Path=/oauth2-service/**
-        - id: order-service
-          uri: lb://order-service
+        - id: course-service
+          uri: lb://course-service
           predicates:
-            - Path=/order/**
+            - Path=/course-service/**
+        - id: fileupload-service
+          uri: lb://fileupload-service
+          predicates:
+            - Path=/fileupload-service/**
+        - id: message-service
+          uri: lb://message-service
+          predicates:
+            - Path=/message-service/**
+        - id: practical-service
+          uri: lb://practical-service
+          predicates:
+            - Path=/practical-service/**
+        - id: sign-service
+          uri: lb://sign-service
+          predicates:
+            - Path=/sign-service/**
   datasource:
     druid:
       username: root
